@@ -1,0 +1,48 @@
+{
+"\$schema": "[http://json-schema.org/draft-07/schema#](http://json-schema.org/draft-07/schema#)",
+"title": "EC v1 Protocol Message Schema",
+"type": "object",
+"required": \[
+"schemaVersion",
+"schemaUri",
+"messageId",
+"timestamp",
+"agentId",
+"action",
+"data"
+],
+"properties": {
+"schemaVersion": {
+"type": "string",
+"enum": \["1.0"],
+"description": "The version of the EC v1 schema in use."
+},
+"schemaUri": {
+"type": "string",
+"format": "uri",
+"description": "Canonical URI pointing to the full JSON schema definition. Example: [https://spec.connexai.com/v1](https://spec.connexai.com/v1)"
+},
+"messageId": {
+"type": "string",
+"description": "A unique identifier for this message, typically a UUID."
+},
+"timestamp": {
+"type": "integer",
+"description": "Epoch timestamp in milliseconds (UTC)."
+},
+"agentId": {
+"type": "string",
+"description": "Identifier for the AI model, agent, or system that generated the message."
+},
+"action": {
+"type": "string",
+"description": "Describes the requested action or purpose of the message (e.g., remember\_format, confirmation\_response)."
+},
+"data": {
+"type": "object",
+"description": "Structured data payload relevant to the specified action.",
+"additionalProperties": true
+}
+},
+"additionalProperties": false
+}
