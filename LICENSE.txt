@@ -1,0 +1,34 @@
+ECv1 Protocol License (ECv1-PL v1.0)
+
+Copyright (c) 2025 ConnexAI Inc.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person or organization obtaining a copy of this protocol specification, associated documentation, and reference implementations (the "ECv1 Materials"), to deal in the ECv1 Materials without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the ECv1 Materials, and to permit persons to whom the ECv1 Materials are furnished to do so, subject to the following conditions:
+
+1. Attribution Requirement:
+
+   * Implementations or distributions of the ECv1 Protocol must retain appropriate attribution to ConnexAI Inc. and include a reference to the original specification repository or website ([https://spec.connexai.com/v1](https://spec.connexai.com/v1)).
+
+2. Limitation of Liability:
+
+   * The ECv1 Materials are provided "AS IS", WITHOUT WARRANTY OF ANY KIND, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall ConnexAI Inc. or contributors be liable for any claim, damages, or other liability arising from or in connection with the ECv1 Materials or the use or other dealings in the ECv1 Materials.
+
+3. Patent Grant:
+
+   * To the extent that any patent claims are necessarily infringed by implementations of the ECv1 Protocol, ConnexAI Inc. hereby grants a perpetual, worldwide, non-exclusive, royalty-free, irrevocable patent license to implement and use the ECv1 Protocol as specified.
+
+4. Versioning:
+
+   * This license applies to version 1.0 of the ECv1 Protocol. Future versions may introduce additional terms or modifications. Implementers should specify the version of the protocol in use via the `schemaVersion` and `schemaUri` fields.
+
+5. Trademarks:
+
+   * The names "ECv1" and "ConnexAI" are trademarks of ConnexAI Inc. Use of these trademarks is permitted solely for the purpose of identifying protocol compatibility and conformance. Any other use requires prior written permission.
+
+---
+
+This license is inspired by permissive licenses such as MIT and Apache 2.0 but adapted specifically for open protocol specifications to encourage wide adoption while preserving attribution and clarity of responsibility.
+
+Version: ECv1-PL v1.0
+Issued: 2025-05-19
+Maintainer: David Graham Smith, Founder, ConnexAI Inc.

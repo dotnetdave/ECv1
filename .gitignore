@@ -1,0 +1,61 @@
+# Ignore Node.js dependencies
+
+node\_modules/
+
+# Ignore .NET build outputs
+
+bin/
+obj/
+
+# Ignore Python compiled files
+
+**pycache**/
+\*.pyc
+
+# VS Code settings
+
+.vscode/
+
+# OS-specific files
+
+.DS\_Store
+Thumbs.db
+
+# Ignore environment files
+
+.env
+
+# Ignore logs
+
+\*.log
+
+# Ignore compressed and packaged files
+
+\*.zip
+\*.tar.gz
+\*.tgz
+
+# Ignore any user-generated temp files
+
+\*.tmp
+\*.bak
+
+# Ignore Python virtual environments
+
+venv/
+ENV/
+
+# Ignore coverage reports
+
+coverage/
+\*.coverage
+
+# Ignore build artifacts
+
+dist/
+build/
+
+# Ignore personal settings files
+
+\*.swp
+\*.swo
