@@ -76,13 +76,20 @@ See the full [EC v1 Protocol Specification](spec/ECv1-Specification.md) for sche
 
 ---
 
-## License
+# License
 
-This protocol and its reference implementations are provided under the **ECv1 Protocol License (ECv1-PL v1.0)**. Free to use, distribute, and implement with proper attribution.
+This protocol and its reference implementations are provided under the **ECv1 Protocol Business Source License (BUSL-1.1)**.
 
-> "EC v1 Protocol developed by ConnexAI Inc., licensed under ECv1-PL v1.0."
+* **Non-commercial use** is permitted immediately.
+* **Commercial use** is permitted after **May 19, 2028**, or with written permission from ConnexAI Inc.
+* You must retain attribution and reference to the official schema at [https://spec.connexai.com/v1](https://spec.connexai.com/v1).
 
----
+> "EC v1 Protocol developed by ConnexAI Inc., licensed under BUSL-1.1."
+
+For full license details, see [LICENSE.txt](LICENSE.txt).
+
+For commercial licensing inquiries, contact: [dave@connexai.com](mailto:dave@connexai.com).
+
 
 ## Contributing
 
