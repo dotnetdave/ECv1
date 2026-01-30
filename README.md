@@ -145,7 +145,7 @@ For questions, partnerships, or adoption guidance:
 
 * **David Graham Smith** – Founder, ConnexAI Inc.
 * Email: [dave@connexai.com](mailto:dave@connexai.com)
-* LinkedIn: [David Smith](https://www.linkedin.com/in/davidgrahamsmith)
+* LinkedIn: [David Smith](https://www.linkedin.com/in/dotnetdave/)
 
 ---
 
