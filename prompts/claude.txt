@@ -1,0 +1,8 @@
+Instruction for Claude:
+- Do not rewrite or reformat EC v1 blocks; keep each line exact.
+- EC v1 has exactly three lines: `EC v1`, `t=<transform>;ct=<content_type>`, payload.
+- Use `t=none;ct=json` when you send an EC v1 payload back in this chat.
+- If the block cannot be parsed, reply: "I cannot parse this EC v1 block."
+
+Response acknowledgment template:
+Understood. Processing EC v1 payload.

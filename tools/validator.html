@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EC v1 Validator (offline)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px auto; max-width: 900px; line-height: 1.5; padding: 0 12px; }
+    textarea { width: 100%; min-height: 220px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 14px; }
+    pre { background: #f6f8fa; padding: 12px; border-radius: 8px; overflow-x: auto; }
+    .row { margin: 12px 0; }
+    button { padding: 8px 14px; border: 1px solid #ccc; border-radius: 6px; background: #0b57d0; color: #fff; cursor: pointer; }
+    button:hover { background: #0948ad; }
+    .ok { color: #0a7d33; }
+    .err { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>EC v1 Validator</h1>
+  <p>Paste an EC v1 three-line block below. Works fully offline.</p>
+  <div class="row">
+    <textarea id="input" placeholder="EC v1&#10;t=none;ct=json&#10;{...}"></textarea>
+  </div>
+  <div class="row">
+    <button onclick="validate()">Validate & Decode</button>
+  </div>
+  <div id="status" class="row"></div>
+  <pre id="output"></pre>
+
+  <script>
+    function parseLines(text) {
+      const lines = text.replace(/\r\n/g, '\n').split('\n').filter(l => l.trim().length > 0);
+      if (lines.length < 3) throw new Error(`Expected 3 lines, got ${lines.length}`);
+      if (lines[0].trim() !== 'EC v1') throw new Error('Missing EC v1 header');
+      const meta = lines[1].trim();
+      const payload = lines.slice(2).join('\n').trim(); // allow pasted payload with accidental newlines
+      let t = null, ct = 'json';
+      meta.split(';').forEach(p => {
+        if (p.startsWith('t=')) t = p.slice(2);
+        if (p.startsWith('ct=')) ct = p.slice(3);
+      });
+      if (!t) throw new Error('Missing t=');
+      return { t, ct, payload };
+    }
+
+    async function applyTransforms(t, payload) {
+      let data = payload;
+      const steps = t.split('>');
+      if (steps[0] === 'none' && steps.length === 1) {
+        return new TextEncoder().encode(payload);
+      }
+      // If the last step is b64 we need to decode first when unwinding
+      let bytes = new TextEncoder().encode(payload);
+      for (let i = steps.length - 1; i >= 0; i--) {
+        const step = steps[i];
+        if (step === 'b64') {
+          const bin = atob(new TextDecoder().decode(bytes));
+          bytes = new Uint8Array(bin.length);
+          for (let j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
+        } else if (step === 'gz') {
+          bytes = gunzip(bytes);
+        } else if (step === 'none' || step === '') {
+          continue;
+        } else {
+          throw new Error(`Unknown transform: ${step}`);
+        }
+      }
+      return bytes;
+    }
+
+    // Minimal gzip inflate (pako-like) via CompressionStream/DecompressionStream where available; fallback to error if not supported.
+    function gunzip(bytes) {
+      if (typeof DecompressionStream === 'undefined') {
+        throw new Error('gunzip not supported in this browser; try none or b64 only.');
+      }
+      const ds = new DecompressionStream('gzip');
+      const blob = new Blob([bytes]);
+      return new Response(blob.stream().pipeThrough(ds)).arrayBuffer().then(buf => new Uint8Array(buf));
+    }
+
+    async function validate() {
+      const status = document.getElementById('status');
+      const out = document.getElementById('output');
+      status.textContent = '';
+      out.textContent = '';
+      try {
+        const { t, ct, payload } = parseLines(document.getElementById('input').value);
+        const bytes = await applyTransforms(t, payload);
+        const text = new TextDecoder().decode(bytes);
+        const isJson = ct === 'json';
+        const display = isJson ? JSON.stringify(JSON.parse(text), null, 2) : text;
+        status.innerHTML = `<span class="ok">Valid EC v1</span> · t=${t}; ct=${ct}`;
+        out.textContent = display;
+      } catch (err) {
+        status.innerHTML = `<span class="err">Error: ${err.message}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

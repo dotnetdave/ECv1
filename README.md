@@ -24,6 +24,18 @@ This repository contains:
 
 ---
 
+## LLM Copy/Paste Best Practices
+
+* **Chat UIs**: default to `t=none;ct=json`. Encoded blobs are often reformatted or rejected.
+* **If encoding**: `t=gz>b64` is agent/tool only; do not use in consumer chat UIs unless explicitly supported.
+* **Keep it small**: use compact JSON for chat copy/paste. See `examples/ecv1_tiny_none.txt`.
+* **Tell the model**: prepend a short instruction (see `prompts/` per platform) to keep lines unchanged.
+* **Validate locally**: use `tools/validator.html` (offline) or `node tools/ecv1-validate.js` to check integrity.
+* **Platform prompts**: ready-to-paste instructions for ChatGPT/Claude/Grok in `prompts/`.
+* **Playground**: `tools/playground.html` for offline encode/decode and copy-ready blocks.
+
+---
+
 ## EC v1 Message Format
 
 ```
@@ -97,6 +109,7 @@ Examples:
 * [x] Rust (Cargo) – `src/Rust/src/main.rs`
 * [x] Java – `src/Java/ECv1Protocol.java`
 * [x] Node CLI utility – `tools/ecv1-cli.js` (stdin/stdout friendly)
+* [x] Validator CLI – `tools/ecv1-validate.js`
 
 ### Quick CLI Usage (examples/confirmation_message.json)
 
@@ -106,6 +119,7 @@ Examples:
 * Rust: `cd src/Rust && cargo run -- encode ../../examples/confirmation_message.json ../../ecv1.txt`
 * Java: `javac src/Java/ECv1Protocol.java && java -cp src/Java ECv1Protocol encode examples/confirmation_message.json ecv1.txt`
 * Standalone CLI: `node tools/ecv1-cli.js encode examples/confirmation_message.json ecv1.txt` (or `-` for stdin/stdout)
+* Validate any block: `node tools/ecv1-validate.js ecv1.txt` (or pipe via stdin)
 
 ---
 

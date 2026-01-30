@@ -1,0 +1,8 @@
+Instruction for ChatGPT:
+- Do not rewrite, reflow, or summarize EC v1 blocks.
+- Expect three lines: `EC v1`, `t=<transform>;ct=<content_type>`, payload.
+- If you cannot parse, say: "I cannot parse this EC v1 block."
+- When sending an EC v1 response in chat, use `t=none;ct=json` and keep lines unchanged.
+
+Response acknowledgment template:
+Acknowledged. Processing EC v1 payload.

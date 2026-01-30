@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EC v1 Playground</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px auto; max-width: 960px; padding: 0 14px; line-height: 1.5; }
+    textarea, pre { width: 100%; font-family: "SFMono-Regular", Consolas, monospace; font-size: 14px; }
+    textarea { min-height: 200px; }
+    pre { background: #f6f8fa; padding: 12px; border-radius: 8px; overflow-x: auto; }
+    .row { margin: 14px 0; }
+    label { font-weight: 600; }
+    select, button { padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; }
+    button { background: #0b57d0; color: #fff; cursor: pointer; }
+    button:hover { background: #0948ad; }
+  </style>
+</head>
+<body>
+  <h1>EC v1 Playground</h1>
+  <p>Create or decode EC v1 messages. Works offline in the browser.</p>
+
+  <div class="row">
+    <label for="payload">JSON payload</label>
+    <textarea id="payload" placeholder='{"hello":"world"}'></textarea>
+  </div>
+  <div class="row">
+    <label for="transform">Transform</label>
+    <select id="transform">
+      <option value="none">none (chat-friendly)</option>
+      <option value="gz>b64">gz>b64 (agent/tool)</option>
+    </select>
+    <button onclick="encode()">Encode</button>
+  </div>
+  <div class="row">
+    <label for="ecv1">EC v1 block</label>
+    <textarea id="ecv1" placeholder="EC v1&#10;t=none;ct=json&#10;..."></textarea>
+  </div>
+  <div class="row">
+    <button onclick="decode()">Decode</button>
+  </div>
+  <div class="row">
+    <label>Decoded output</label>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    function b64encode(bytes) {
+      let binary = '';
+      bytes.forEach(b => binary += String.fromCharCode(b));
+      return btoa(binary);
+    }
+    function b64decode(str) {
+      const bin = atob(str);
+      const out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+    async function gzip(bytes) {
+      if (typeof CompressionStream === 'undefined') throw new Error('gzip not supported in this browser');
+      const cs = new CompressionStream('gzip');
+      const blob = new Blob([bytes]);
+      const resp = new Response(blob.stream().pipeThrough(cs));
+      const buf = await resp.arrayBuffer();
+      return new Uint8Array(buf);
+    }
+    async function gunzip(bytes) {
+      if (typeof DecompressionStream === 'undefined') throw new Error('gunzip not supported in this browser');
+      const ds = new DecompressionStream('gzip');
+      const blob = new Blob([bytes]);
+      const resp = new Response(blob.stream().pipeThrough(ds));
+      const buf = await resp.arrayBuffer();
+      return new Uint8Array(buf);
+    }
+
+    async function encode() {
+      try {
+        const json = JSON.stringify(JSON.parse(document.getElementById('payload').value.trim()));
+        let bytes = new TextEncoder().encode(json);
+        const t = document.getElementById('transform').value;
+        if (t === 'gz>b64') {
+          bytes = await gzip(bytes);
+          bytes = new TextEncoder().encode(b64encode(bytes));
+        }
+        const payload = new TextDecoder().decode(bytes);
+        document.getElementById('ecv1').value = `EC v1\nt=${t};ct=json\n${payload}`;
+      } catch (err) {
+        alert('Encode error: ' + err.message);
+      }
+    }
+
+    async function decode() {
+      try {
+        const block = document.getElementById('ecv1').value.replace(/\\r\\n/g, '\\n').trim().split('\\n').filter(Boolean);
+        if (block.length < 3 || block[0] !== 'EC v1') throw new Error('Invalid EC v1 block');
+        const meta = block[1];
+        const payload = block.slice(2).join('\\n');
+        let t = 'none';
+        meta.split(';').forEach(p => { if (p.startsWith('t=')) t = p.slice(2); });
+
+        let bytes = new TextEncoder().encode(payload);
+        if (t === 'gz>b64') {
+          bytes = b64decode(new TextDecoder().decode(bytes));
+          bytes = await gunzip(bytes);
+        } else if (t !== 'none') {
+          throw new Error('Unsupported transform: ' + t);
+        }
+        const jsonText = new TextDecoder().decode(bytes);
+        document.getElementById('output').textContent = JSON.stringify(JSON.parse(jsonText), null, 2);
+      } catch (err) {
+        document.getElementById('output').textContent = 'Decode error: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

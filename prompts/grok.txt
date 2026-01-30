@@ -1,0 +1,7 @@
+Instruction for Grok:
+- Keep EC v1 blocks verbatim (no wrapping or reflow). Three lines only.
+- When replying with EC v1, use `t=none;ct=json` in this chat unless explicitly asked otherwise.
+- If parsing fails, answer: "I cannot parse this EC v1 block."
+
+Response acknowledgment template:
+Got it. Processing EC v1 payload.
