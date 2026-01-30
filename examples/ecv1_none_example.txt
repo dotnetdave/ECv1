@@ -1,0 +1,3 @@
+EC v1
+t=none;ct=json
+{"schemaVersion":"1.0","schemaUri":"https://spec.connexai.com/v1","messageId":"example-123","timestamp":1716200000000,"agentId":"demo","action":"ping","data":{"note":"Hello EC v1"}}

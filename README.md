@@ -19,6 +19,7 @@ This repository contains:
 * **Preserves Data Integrity** by avoiding model-induced formatting errors.
 * **Compact and Efficient**, leveraging Base64 encoding and optional compression.
 * **Simple Three-Line Format** for easy parsing and generation.
+* **Transparent Handling** with optional, brief acknowledgments during processing to build user trust without altering the payload format.
 * **Extensible and Versioned**, ensuring long-term interoperability.
 
 ---
@@ -63,10 +64,48 @@ eyJzY2hlbWFWZXJzaW9uIjoiMS4wIiwic2NoZW1hVXJpIjoiaHR0cHM6Ly9zcGVjLmNvbm5leGFpLmNv
 
 ---
 
+## Recommended Agent Behavior
+
+* **Acknowledge Processing**: When receiving an EC v1 block, you may send a short status update (e.g., "Processing EC v1 payload..."); this is recommended for transparency but not required by the spec.
+* **Keep the Payload Pristine**: Do not wrap, rewrite, or inline the three-line block; acknowledgments should be separate from the encapsulated content.
+* **Mirror Transparency on Output**: When producing EC v1 payloads, you may precede them with a brief notice that processing is underway, then emit the clean block exactly as specified.
+* **Error Handling**: If validation fails, return a concise human-readable note plus a structured EC v1 error payload where appropriate.
+
+Acknowledgments are optional: the EC v1 spec does not require them. This approach preserves the protocol’s clean interchange format while improving user confidence and transparency when you choose to use them.
+
+---
+
+## LLM Compatibility & Transforms
+
+* **Chat-friendly default**: Use `t=none;ct=json` when the receiver is an LLM chat interface; most models struggle to decompress arbitrary blobs.
+* **If you must encode**: Some models can handle `t=gz>b64` only with explicit instructions and small payloads—treat it as best-effort, not guaranteed.
+* **Agent/tool contexts**: Richer transforms are fine where you control the decoder; always keep a fallback (e.g., accept `none` and `gz>b64` at minimum).
+* **Fail loudly**: Unknown transforms should produce a clear error instead of silent fallback.
+
+Examples:
+* Chat-safe (no compression): `examples/ecv1_none_example.txt`
+* Compressed for agents: `examples/ecv1_gz_b64_example.txt`
+
+---
+
 ## Reference Implementations
 
 * [x] C# (.NET 6+) – `src/CSharp/ECv1Protocol.cs`
 * [x] JavaScript (Node.js) – `src/JavaScript/ECv1Protocol.js`
+* [x] Python – `src/python/encoder.py` / `decoder.py`
+* [x] Go – `src/Go/ecv1.go`
+* [x] Rust (Cargo) – `src/Rust/src/main.rs`
+* [x] Java – `src/Java/ECv1Protocol.java`
+* [x] Node CLI utility – `tools/ecv1-cli.js` (stdin/stdout friendly)
+
+### Quick CLI Usage (examples/confirmation_message.json)
+
+* C#: `dotnet run --project src/CSharp/ECv1Protocol.csproj -- encode examples/confirmation_message.json ecv1.txt`
+* JavaScript: `node src/JavaScript/ECv1Protocol.js encode examples/confirmation_message.json ecv1.txt` (use `-` for stdin/stdout)
+* Go: `go run src/Go/ecv1.go -mode encode -input examples/confirmation_message.json -output ecv1.txt`
+* Rust: `cd src/Rust && cargo run -- encode ../../examples/confirmation_message.json ../../ecv1.txt`
+* Java: `javac src/Java/ECv1Protocol.java && java -cp src/Java ECv1Protocol encode examples/confirmation_message.json ecv1.txt`
+* Standalone CLI: `node tools/ecv1-cli.js encode examples/confirmation_message.json ecv1.txt` (or `-` for stdin/stdout)
 
 ---
 
